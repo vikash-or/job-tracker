@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Personal Job Application Tracker | Manage Your Job Search</title>
+  <meta name="description" content="A simple, clean, responsive personal job application tracker web application built for active job seekers. Track applications, interviews, follow-ups, deadlines, and metrics.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div id="app-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo-icon">JT</div>
+        <div>
+          <div class="logo-text">JobTracker</div>
+          <div class="logo-subtitle">Personal Edition</div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="#dashboard" class="nav-item active" id="nav-dashboard">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 00-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 00-1 1m-6 0h6"></path></svg>
+          <span>Dashboard</span>
+        </a>
+        <a href="#applications" class="nav-item" id="nav-applications">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+          <span>Applications</span>
+        </a>
+        <a href="#followups" class="nav-item" id="nav-followups">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          <span>Follow-ups</span>
+        </a>
+        <a href="#interviews" class="nav-item" id="nav-interviews">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+          <span>Interviews</span>
+        </a>
+        <a href="#contacts" class="nav-item" id="nav-contacts">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+          <span>Contacts</span>
+        </a>
+        <a href="#analytics" class="nav-item" id="nav-analytics">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+          <span>Analytics</span>
+        </a>
+        <a href="#settings" class="nav-item" id="nav-settings">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+          <span>Settings</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button class="btn btn-secondary btn-sm" style="width: 100%;" onclick="App.loadDemoData()">⚡ Load Demo Data</button>
+      </div>
+    </aside>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+      <!-- Top Navigation Bar -->
+      <header class="top-bar">
+        <div class="top-bar-left">
+          <button class="menu-toggle" onclick="App.toggleMobileMenu()" id="menu-toggle-btn">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+          </button>
+          <div class="global-search">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            <input type="text" id="global-search-input" placeholder="Search company, job title, notes, or location...">
+          </div>
+        </div>
+
+        <div class="top-bar-right">
+          <button class="theme-toggle-btn" onclick="App.toggleTheme()" title="Toggle Light/Dark Theme">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="20" height="20"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+          </button>
+          <button class="quick-add-btn" onclick="App.openAddModal()">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+            <span>+ Add Application</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- View Containers -->
+      <main class="page-content">
+
+        <!-- 1. DASHBOARD VIEW -->
+        <section id="view-dashboard" class="view-section active">
+          <div class="view-header">
+            <div>
+              <h1 class="view-title">Dashboard</h1>
+              <p class="view-subtitle">Overview of your active job search, today's actions, and application pipeline.</p>
+            </div>
+          </div>
+
+          <!-- Summary Metric Cards -->
+          <div id="dashboard-stats-grid" class="stats-grid"></div>
+
+          <!-- Today's Actions Section -->
+          <div class="actions-section">
+            <div class="section-title-bar">
+              <h2 class="section-title">
+                ⚡ Today's Actions
+              </h2>
+              <span class="urgent-badge">High Priority</span>
+            </div>
+            <div id="todays-actions-container"></div>
+          </div>
+
+          <!-- Application Pipeline Breakdown -->
+          <div class="pipeline-card">
+            <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: 0.75rem; color: var(--text-primary);">Application Pipeline</h3>
+            <div id="pipeline-flow-container"></div>
+          </div>
+
+          <!-- Dashboard Visual Charts -->
+          <div class="charts-grid">
+            <div class="chart-card">
+              <div class="chart-header">Application Sources</div>
+              <div id="chart-sources-container"></div>
+            </div>
+            <div class="chart-card">
+              <div class="chart-header">Applications by Month</div>
+              <div id="chart-monthly-container"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. APPLICATIONS VIEW -->
+        <section id="view-applications" class="view-section">
+          <div class="view-header">
+            <div>
+              <h1 class="view-title">Applications</h1>
+              <p class="view-subtitle">Manage, search, filter, and sort your job application records.</p>
+            </div>
+            <span class="badge badge-saved" id="applications-count-badge">0 items</span>
+          </div>
+
+          <!-- Filter & Search Controls -->
+          <div class="filter-bar">
+            <div class="filter-group">
+              <input type="text" id="app-search-input" class="form-input" placeholder="Search applications..." style="min-width: 200px;">
+              <select id="filter-status" class="form-select">
+                <option value="">All Statuses</option>
+                <option value="Saved">Saved</option>
+                <option value="Applied">Applied</option>
+                <option value="Follow-up Due">Follow-up Due</option>
+                <option value="Assessment">Assessment</option>
+                <option value="Interview">Interview</option>
+                <option value="Final Round">Final Round</option>
+                <option value="Offer">Offer</option>
+                <option value="Rejected">Rejected</option>
+                <option value="Withdrawn">Withdrawn</option>
+                <option value="No Response">No Response</option>
+              </select>
+              <select id="filter-job-type" class="form-select">
+                <option value="">All Job Types</option>
+                <option value="Full-time">Full-time</option>
+                <option value="Internship">Internship</option>
+                <option value="Contract">Contract</option>
+                <option value="Part-time">Part-time</option>
+              </select>
+              <select id="filter-work-mode" class="form-select">
+                <option value="">All Work Modes</option>
+                <option value="On-site">On-site</option>
+                <option value="Hybrid">Hybrid</option>
+                <option value="Remote">Remote</option>
+              </select>
+              <select id="filter-priority" class="form-select">
+                <option value="">All Priorities</option>
+                <option value="High">High Priority</option>
+                <option value="Medium">Medium Priority</option>
+                <option value="Low">Low Priority</option>
+              </select>
+              <select id="filter-source" class="form-select">
+                <option value="">All Sources</option>
+                <option value="LinkedIn">LinkedIn</option>
+                <option value="Naukri">Naukri</option>
+                <option value="Company Website">Company Website</option>
+                <option value="Referral">Referral</option>
+                <option value="Indeed">Indeed</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Applications Table -->
+          <div id="applications-table-container" class="table-container"></div>
+        </section>
+
+        <!-- 3. FOLLOW-UPS VIEW -->
+        <section id="view-followups" class="view-section">
+          <div class="view-header">
+            <div>
+              <h1 class="view-title">Follow-ups Management</h1>
+              <p class="view-subtitle">Track recruiter outreach, follow-up dates, and responses.</p>
+            </div>
+          </div>
+
+          <div id="followups-container"></div>
+        </section>
+
+        <!-- 4. INTERVIEWS VIEW -->
+        <section id="view-interviews" class="view-section">
+          <div class="view-header">
+            <div>
+              <h1 class="view-title">Interviews</h1>
+              <p class="view-subtitle">Track upcoming interview rounds, interviewers, and past performance questions.</p>
+            </div>
+          </div>
+
+          <div id="interviews-container"></div>
+        </section>
+
+        <!-- 5. CONTACTS VIEW -->
+        <section id="view-contacts" class="view-section">
+          <div class="view-header">
+            <div>
+              <h1 class="view-title">Contacts & Networking</h1>
+              <p class="view-subtitle">Store recruiters, hiring managers, alumni, and referral contacts.</p>
+            </div>
+            <button class="btn btn-primary" onclick="Contacts.openAddModal()">+ Add New Contact</button>
+          </div>
+
+          <div style="margin-bottom: 1rem; max-width: 400px;">
+            <input type="text" class="form-input" placeholder="Search contacts..." oninput="Contacts.setSearch(this.value)" style="width: 100%;">
+          </div>
+
+          <div id="contacts-grid-container" class="stats-grid"></div>
+        </section>
+
+        <!-- 6. ANALYTICS VIEW -->
+        <section id="view-analytics" class="view-section">
+          <div class="view-header">
+            <div>
+              <h1 class="view-title">Search Analytics & Performance</h1>
+              <p class="view-subtitle">Review personal conversion rates, application sources, and job type distributions.</p>
+            </div>
+          </div>
+
+          <div id="analytics-content-container"></div>
+        </section>
+
+        <!-- 7. SETTINGS VIEW -->
+        <section id="view-settings" class="view-section">
+          <div class="view-header">
+            <div>
+              <h1 class="view-title">Settings & Backup</h1>
+              <p class="view-subtitle">Export data backups, restore JSON files, manage local browser storage.</p>
+            </div>
+          </div>
+
+          <div class="charts-grid">
+            <div class="chart-card">
+              <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem;">Export Data Backup</h3>
+              <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">Export all your job applications, notes, and contacts to prevent data loss.</p>
+              <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                <button class="btn btn-primary" onclick="Storage.exportJSON()">📥 Export JSON Backup</button>
+                <button class="btn btn-secondary" onclick="Storage.exportCSV()">📊 Export CSV Spreadsheet</button>
+              </div>
+            </div>
+
+            <div class="chart-card">
+              <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem;">Import JSON Backup</h3>
+              <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">Restore job search data from a previously exported JSON backup file.</p>
+              <input type="file" id="import-json-file" accept=".json" style="display: none;" onchange="App.handleImportFile(event)">
+              <button class="btn btn-secondary" onclick="document.getElementById('import-json-file').click()">📤 Import JSON Backup File</button>
+            </div>
+
+            <div class="chart-card">
+              <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem;">Data Storage & Demo Data</h3>
+              <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;" id="settings-stored-apps-count">0 stored applications</p>
+              <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem;">Application version: 1.0.0 (Personal Edition - GitHub Pages compatible)</p>
+              <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                <button class="btn btn-secondary" onclick="App.loadDemoData()">⚡ Load Demo Data</button>
+                <button class="btn btn-danger" onclick="App.confirmClearAll()">⚠️ Clear All Data</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- MODAL: ADD / EDIT APPLICATION -->
+  <div class="modal-backdrop" id="application-form-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="app-modal-title">Add Job Application</h3>
+        <button class="modal-close" onclick="App.closeModal('application-form-modal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <form id="app-form" onsubmit="event.preventDefault(); App.saveApplicationForm();">
+          <input type="hidden" id="app-form-id">
+
+          <div class="form-grid">
+            <!-- Job Details -->
+            <div class="form-section-title">1. Job Details</div>
+            
+            <div class="form-group">
+              <label class="form-label">Company Name *</label>
+              <input type="text" id="app-company" class="form-input" required placeholder="e.g. Zepto Labs">
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label">Job Title *</label>
+              <input type="text" id="app-jobTitle" class="form-input" required placeholder="e.g. Operations Research Analyst">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Job Type</label>
+              <select id="app-jobType" class="form-select">
+                <option value="Full-time">Full-time</option>
+                <option value="Internship">Internship</option>
+                <option value="Contract">Contract</option>
+                <option value="Part-time">Part-time</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Work Mode</label>
+              <select id="app-workMode" class="form-select">
+                <option value="On-site">On-site</option>
+                <option value="Hybrid">Hybrid</option>
+                <option value="Remote">Remote</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Location</label>
+              <input type="text" id="app-location" class="form-input" placeholder="e.g. Gurugram / Bengaluru">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Salary / CTC Offered</label>
+              <input type="text" id="app-salary" class="form-input" placeholder="e.g. 12 - 15 LPA">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Job Posting URL</label>
+              <input type="url" id="app-jobUrl" class="form-input" placeholder="https://careers.company.com/job/123">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Company Career Portal URL</label>
+              <input type="url" id="app-companyCareerUrl" class="form-input" placeholder="https://careers.company.com">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Date Found</label>
+              <input type="date" id="app-dateFound" class="form-input">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Application Deadline</label>
+              <input type="date" id="app-deadline" class="form-input">
+            </div>
+
+            <!-- Application Details & Status -->
+            <div class="form-section-title">2. Application Information</div>
+
+            <div class="form-group">
+              <label class="form-label">Application Status</label>
+              <select id="app-status" class="form-select">
+                <option value="Saved">Saved</option>
+                <option value="Applied">Applied</option>
+                <option value="Follow-up Due">Follow-up Due</option>
+                <option value="Assessment">Assessment</option>
+                <option value="Interview">Interview</option>
+                <option value="Final Round">Final Round</option>
+                <option value="Offer">Offer</option>
+                <option value="Rejected">Rejected</option>
+                <option value="Withdrawn">Withdrawn</option>
+                <option value="No Response">No Response</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Priority</label>
+              <select id="app-priority" class="form-select">
+                <option value="High">High</option>
+                <option value="Medium">Medium</option>
+                <option value="Low">Low</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Date Applied</label>
+              <input type="date" id="app-dateApplied" class="form-input">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Source</label>
+              <select id="app-source" class="form-select">
+                <option value="LinkedIn">LinkedIn</option>
+                <option value="Naukri">Naukri</option>
+                <option value="Company Website">Company Website</option>
+                <option value="Referral">Referral</option>
+                <option value="Indeed">Indeed</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">CV / Resume Version Used</label>
+              <input type="text" id="app-cvVersion" class="form-input" placeholder="e.g. OR-01, Data-01, Analytics-01">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Cover Letter Used</label>
+              <select id="app-coverLetterUsed" class="form-select">
+                <option value="No">No</option>
+                <option value="Yes">Yes</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Employee Referral?</label>
+              <select id="app-referral" class="form-select">
+                <option value="No">No</option>
+                <option value="Yes">Yes</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Referral Person Name</label>
+              <input type="text" id="app-referralPerson" class="form-input" placeholder="e.g. Rahul Sharma">
+            </div>
+
+            <!-- Follow-up Section -->
+            <div class="form-section-title">3. Follow-up Details</div>
+
+            <div class="form-group">
+              <label class="form-label">Last Action Taken</label>
+              <input type="text" id="app-lastAction" class="form-input" placeholder="e.g. Sent application / Emailed recruiter">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Last Action Date</label>
+              <input type="date" id="app-lastActionDate" class="form-input">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Next Action Planned</label>
+              <input type="text" id="app-nextAction" class="form-input" placeholder="e.g. Follow up with HR">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Follow-up Date</label>
+              <input type="date" id="app-followUpDate" class="form-input">
+            </div>
+
+            <!-- Recruiter Contact Section -->
+            <div class="form-section-title">4. Recruiter / Contact Person</div>
+
+            <div class="form-group">
+              <label class="form-label">Contact Person</label>
+              <input type="text" id="app-contactPerson" class="form-input" placeholder="e.g. Ananya Gupta">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Contact Role</label>
+              <input type="text" id="app-contactRole" class="form-input" placeholder="e.g. Talent Acquisition Lead">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Contact Email</label>
+              <input type="email" id="app-contactEmail" class="form-input" placeholder="recruiter@company.com">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Contact LinkedIn URL</label>
+              <input type="url" id="app-contactLinkedIn" class="form-input" placeholder="https://linkedin.com/in/recruiter">
+            </div>
+
+            <!-- Assessment Section -->
+            <div class="form-section-title">5. Assessment Details</div>
+
+            <div class="form-group">
+              <label class="form-label">Assessment Required?</label>
+              <select id="app-assessmentRequired" class="form-select">
+                <option value="No">No</option>
+                <option value="Yes">Yes</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Assessment Status</label>
+              <select id="app-assessmentStatus" class="form-select">
+                <option value="Pending">Pending</option>
+                <option value="Completed">Completed</option>
+                <option value="Passed">Passed</option>
+                <option value="Failed">Failed</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Assessment Date</label>
+              <input type="date" id="app-assessmentDate" class="form-input">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Assessment Deadline</label>
+              <input type="date" id="app-assessmentDeadline" class="form-input">
+            </div>
+
+            <div class="form-group full-width">
+              <label class="form-label">Assessment Notes</label>
+              <textarea id="app-assessmentNotes" class="form-input" placeholder="HackerRank test link, topics tested, performance notes..."></textarea>
+            </div>
+
+            <!-- Interview Section -->
+            <div class="form-section-title">6. Interview Details</div>
+
+            <div class="form-group">
+              <label class="form-label">Interview Date</label>
+              <input type="date" id="app-interviewDate" class="form-input">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Interview Time</label>
+              <input type="time" id="app-interviewTime" class="form-input">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Interview Round</label>
+              <select id="app-interviewRound" class="form-select">
+                <option value="Technical">Technical</option>
+                <option value="HR">HR</option>
+                <option value="Managerial">Managerial</option>
+                <option value="Case Study">Case Study</option>
+                <option value="Final">Final</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Interview Status</label>
+              <select id="app-interviewStatus" class="form-select">
+                <option value="Scheduled">Scheduled</option>
+                <option value="Completed">Completed</option>
+                <option value="Passed">Passed</option>
+                <option value="Cancelled">Cancelled</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Interviewer Name / Role</label>
+              <input type="text" id="app-interviewer" class="form-input" placeholder="e.g. Vikramaditya (Senior Analytics Lead)">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Fit Assessment</label>
+              <select id="app-fit" class="form-select">
+                <option value="Strong Fit">Strong Fit</option>
+                <option value="Good Fit">Good Fit</option>
+                <option value="Possible Fit">Possible Fit</option>
+                <option value="Weak Fit">Weak Fit</option>
+              </select>
+            </div>
+
+            <div class="form-group full-width">
+              <label class="form-label">Preparation Notes</label>
+              <textarea id="app-prepNotes" class="form-input" placeholder="Topics to revise, case studies, algorithm prep..."></textarea>
+            </div>
+
+            <!-- Job Screening Details -->
+            <div class="form-section-title">7. Screening & Fit Analysis</div>
+
+            <div class="form-group full-width">
+              <label class="form-label">Why I Applied</label>
+              <input type="text" id="app-whyApplied" class="form-input" placeholder="Reasons for interest in company/role...">
+            </div>
+
+            <div class="form-group full-width">
+              <label class="form-label">Key Requirements</label>
+              <input type="text" id="app-keyRequirements" class="form-input" placeholder="Python, SQL, Gurobi, Optimization...">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Requirements I Meet</label>
+              <input type="text" id="app-metRequirements" class="form-input" placeholder="Strong SQL, LP modeling background">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Requirements I Don't Meet</label>
+              <input type="text" id="app-unmetRequirements" class="form-input" placeholder="Commercial solver experience">
+            </div>
+
+            <!-- Additional Notes & Description -->
+            <div class="form-section-title">8. Notes & Description</div>
+
+            <div class="form-group full-width">
+              <label class="form-label">General Application Notes</label>
+              <textarea id="app-notes" class="form-input" placeholder="Any additional thoughts, recruiter comments, reminder notes..."></textarea>
+            </div>
+
+            <div class="form-group full-width">
+              <label class="form-label">Job Description</label>
+              <textarea id="app-jobDescription" class="form-input" placeholder="Paste key parts of job description here..."></textarea>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="App.closeModal('application-form-modal')">Cancel</button>
+        <button class="btn btn-primary" onclick="App.saveApplicationForm()">Save Application</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: VIEW APPLICATION DETAILS & TIMELINE -->
+  <div class="modal-backdrop" id="view-details-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title" id="view-modal-company">Company Details</h3>
+          <div style="font-size: 0.85rem; color: var(--text-secondary);" id="view-modal-title">Job Title</div>
+        </div>
+        <button class="modal-close" onclick="App.closeModal('view-details-modal')">✕</button>
+      </div>
+      <input type="hidden" id="view-modal-app-id">
+
+      <div class="modal-body" id="view-modal-body-content"></div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="App.closeModal('view-details-modal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: LOG INTERVIEW PERFORMANCE NOTES -->
+  <div class="modal-backdrop" id="interview-notes-modal">
+    <div class="modal" style="max-width: 600px;">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title">Log Interview Notes</h3>
+          <div style="font-size: 0.85rem; color: var(--text-secondary);" id="interview-notes-company">Company</div>
+        </div>
+        <button class="modal-close" onclick="App.closeModal('interview-notes-modal')">✕</button>
+      </div>
+      <input type="hidden" id="interview-notes-app-id">
+
+      <div class="modal-body">
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label class="form-label">Interview Status</label>
+          <select id="modal-interview-status" class="form-select">
+            <option value="Scheduled">Scheduled</option>
+            <option value="Completed">Completed</option>
+            <option value="Passed">Passed</option>
+            <option value="Cancelled">Cancelled</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label class="form-label">Questions Asked by Interviewers</label>
+          <textarea id="modal-questions-asked" class="form-input" placeholder="Log technical/HR questions asked..."></textarea>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label class="form-label">My Performance & Answers Notes</label>
+          <textarea id="modal-prep-notes" class="form-input" placeholder="How did you perform? What answers went well or need improvement?"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Topics to Revise for Next Round</label>
+          <textarea id="modal-interview-notes" class="form-input" placeholder="Concepts or coding topics to practice before next interview..."></textarea>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="App.closeModal('interview-notes-modal')">Cancel</button>
+        <button class="btn btn-primary" onclick="Interviews.saveRecordModal()">Save Performance Log</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ADD / EDIT CONTACT -->
+  <div class="modal-backdrop" id="contact-form-modal">
+    <div class="modal" style="max-width: 550px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Contact Information</h3>
+        <button class="modal-close" onclick="App.closeModal('contact-form-modal')">✕</button>
+      </div>
+      <input type="hidden" id="contact-form-id">
+
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Contact Name *</label>
+            <input type="text" id="contact-form-name" class="form-input" required placeholder="e.g. Ananya Gupta">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Company Name</label>
+            <input type="text" id="contact-form-company" class="form-input" placeholder="e.g. Zepto Labs">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Role / Designation</label>
+            <input type="text" id="contact-form-role" class="form-input" placeholder="e.g. Tech Recruiter / SDE-2">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Contact Type</label>
+            <select id="contact-form-type" class="form-select">
+              <option value="Recruiter">Recruiter</option>
+              <option value="Hiring Manager">Hiring Manager</option>
+              <option value="Employee">Employee</option>
+              <option value="Alumni">Alumni</option>
+              <option value="Referral">Referral</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input type="email" id="contact-form-email" class="form-input" placeholder="name@company.com">
+          </div>
+          <div class="form-group">
+            <label class="form-label">LinkedIn Profile URL</label>
+            <input type="url" id="contact-form-linkedin" class="form-input" placeholder="https://linkedin.com/in/username">
+          </div>
+          <div class="form-group full-width">
+            <label class="form-label">Notes</label>
+            <textarea id="contact-form-notes" class="form-input" placeholder="Networking notes, referral conversation summary..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="App.closeModal('contact-form-modal')">Cancel</button>
+        <button class="btn btn-primary" onclick="Contacts.saveModal()">Save Contact</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notifications Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- JavaScript Files -->
+  <script src="js/storage.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/applications.js"></script>
+  <script src="js/followups.js"></script>
+  <script src="js/interviews.js"></script>
+  <script src="js/contacts.js"></script>
+  <script src="js/analytics.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
