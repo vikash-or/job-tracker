@@ -9,7 +9,6 @@ const Applications = {
     status: '',
     jobType: '',
     workMode: '',
-    priority: '',
     source: '',
     search: ''
   },
@@ -50,14 +49,6 @@ const Applications = {
     if (filterWorkMode) {
       filterWorkMode.addEventListener('change', (e) => {
         this.filters.workMode = e.target.value;
-        this.render();
-      });
-    }
-
-    const filterPriority = document.getElementById('filter-priority');
-    if (filterPriority) {
-      filterPriority.addEventListener('change', (e) => {
-        this.filters.priority = e.target.value;
         this.render();
       });
     }
@@ -107,7 +98,6 @@ const Applications = {
       if (this.filters.status && app.status !== this.filters.status) return false;
       if (this.filters.jobType && app.jobType !== this.filters.jobType) return false;
       if (this.filters.workMode && app.workMode !== this.filters.workMode) return false;
-      if (this.filters.priority && app.priority !== this.filters.priority) return false;
       if (this.filters.source && app.source !== this.filters.source) return false;
 
       if (this.filters.search && this.filters.search.trim() !== '') {
@@ -129,12 +119,6 @@ const Applications = {
     apps.sort((a, b) => {
       let valA = a[this.currentSortField] || '';
       let valB = b[this.currentSortField] || '';
-
-      if (this.currentSortField === 'priority') {
-        const pOrder = { 'High': 3, 'Medium': 2, 'Low': 1 };
-        valA = pOrder[valA] || 0;
-        valB = pOrder[valB] || 0;
-      }
 
       if (valA < valB) return this.currentSortAsc ? -1 : 1;
       if (valA > valB) return this.currentSortAsc ? 1 : -1;
@@ -166,10 +150,8 @@ const Applications = {
             <th>Location</th>
             <th onclick="Applications.sort('dateApplied')">Applied Date ${this.getSortIcon('dateApplied')}</th>
             <th onclick="Applications.sort('status')">Status ${this.getSortIcon('status')}</th>
-            <th onclick="Applications.sort('priority')">Priority ${this.getSortIcon('priority')}</th>
             <th onclick="Applications.sort('followUpDate')">Follow-up ${this.getSortIcon('followUpDate')}</th>
             <th>Interview</th>
-            <th onclick="Applications.sort('deadline')">Deadline ${this.getSortIcon('deadline')}</th>
             <th style="text-align: right;">Actions</th>
           </tr>
         </thead>
@@ -178,7 +160,6 @@ const Applications = {
 
     apps.forEach(app => {
       const statusBadge = this.getStatusBadge(app.status);
-      const priorityBadge = this.getPriorityBadge(app.priority);
 
       html += `
         <tr>
@@ -193,7 +174,6 @@ const Applications = {
           <td>${this.escape(app.location || '—')}</td>
           <td>${app.dateApplied || 'Not Applied'}</td>
           <td>${statusBadge}</td>
-          <td>${priorityBadge}</td>
           <td>
             ${app.followUpDate ? `
               <span style="font-size: 0.8rem; font-weight: 600; color: ${app.followUpDate <= new Date().toISOString().split('T')[0] ? '#d97706' : 'inherit'};">
@@ -205,13 +185,6 @@ const Applications = {
             ${app.interviewDate ? `
               <div style="font-size: 0.8rem; font-weight: 600; color: #0891b2;">${app.interviewDate}</div>
               <div style="font-size: 0.7rem; color: var(--text-muted);">${this.escape(app.interviewRound || '')}</div>
-            ` : '—'}
-          </td>
-          <td>
-            ${app.deadline ? `
-              <span style="font-size: 0.8rem; ${app.deadline <= new Date().toISOString().split('T')[0] ? 'color: #dc2626; font-weight: 700;' : ''}">
-                ${app.deadline}
-              </span>
             ` : '—'}
           </td>
           <td style="text-align: right; white-space: nowrap;">
@@ -256,7 +229,7 @@ const Applications = {
   },
 
   /**
-   * Status & Priority Badge Helpers
+   * Status Badge Helper
    */
   getStatusBadge(status) {
     const statusClasses = {
@@ -273,16 +246,6 @@ const Applications = {
     };
     const cls = statusClasses[status] || 'badge-saved';
     return `<span class="badge ${cls}">${this.escape(status || 'Saved')}</span>`;
-  },
-
-  getPriorityBadge(priority) {
-    const priorityClasses = {
-      'High': 'badge-high',
-      'Medium': 'badge-medium',
-      'Low': 'badge-low'
-    };
-    const cls = priorityClasses[priority] || 'badge-medium';
-    return `<span class="badge ${cls}">${this.escape(priority || 'Medium')}</span>`;
   },
 
   escape(str) {

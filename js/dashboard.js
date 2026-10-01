@@ -68,12 +68,6 @@ const Dashboard = {
       if (app.interviewDate && app.interviewDate >= todayStr) {
         upcomingInterviews++;
       }
-
-      // Count upcoming deadlines within 7 days
-      if (app.deadline && app.deadline >= todayStr) {
-        const diffDays = Math.ceil((new Date(app.deadline) - new Date(todayStr)) / (1000 * 60 * 60 * 24));
-        if (diffDays <= 7) upcomingDeadlines++;
-      }
     });
 
     return {
@@ -171,7 +165,6 @@ const Dashboard = {
     const followupsDue = [];
     const interviewsToday = [];
     const assessmentsDue = [];
-    const deadlinesSoon = [];
 
     apps.forEach(app => {
       // 1. Follow-ups due today or overdue
@@ -189,17 +182,9 @@ const Dashboard = {
       if ((app.assessmentDeadline === todayStr || app.assessmentDate === todayStr) && app.assessmentStatus !== 'Passed' && app.assessmentStatus !== 'Completed') {
         assessmentsDue.push(app);
       }
-
-      // 4. Application Deadlines (Today, 3 days, 7 days)
-      if (app.deadline && app.deadline >= todayStr) {
-        const diffDays = Math.ceil((new Date(app.deadline) - new Date(todayStr)) / (1000 * 60 * 60 * 24));
-        if (diffDays <= 7 && app.status === 'Saved') {
-          deadlinesSoon.push({ app, diffDays });
-        }
-      }
     });
 
-    const totalActionsCount = followupsDue.length + interviewsToday.length + assessmentsDue.length + deadlinesSoon.length;
+    const totalActionsCount = followupsDue.length + interviewsToday.length + assessmentsDue.length;
 
     if (totalActionsCount === 0) {
       container.innerHTML = `
@@ -230,7 +215,10 @@ const Dashboard = {
             <span class="action-date-tag" style="color: ${isOverdue ? '#dc2626' : '#d97706'}">
               ${isOverdue ? '📅 Overdue since ' + app.followUpDate : '📅 Follow-up date: Today'}
             </span>
-            <button class="btn btn-sm btn-secondary" onclick="App.openViewModal('${app.id}')">View</button>
+            <div style="display: flex; gap: 0.35rem;">
+              <a href="${App.getFollowupCalendarUrl(app)}" target="_blank" rel="noopener" class="btn btn-sm btn-secondary" style="text-decoration: none;">📅 Calendar</a>
+              <button class="btn btn-sm btn-secondary" onclick="App.openViewModal('${app.id}')">View</button>
+            </div>
           </div>
         </div>
       `;
@@ -250,7 +238,10 @@ const Dashboard = {
           </div>
           <div class="action-footer">
             <span class="action-date-tag" style="color: #0891b2">👤 Interviewer: ${this.escape(app.interviewer || 'TBD')}</span>
-            <button class="btn btn-sm btn-primary" onclick="App.openViewModal('${app.id}')">Prep Notes</button>
+            <div style="display: flex; gap: 0.35rem;">
+              <a href="${App.getInterviewCalendarUrl(app)}" target="_blank" rel="noopener" class="btn btn-sm btn-secondary" style="text-decoration: none;">📅 Calendar</a>
+              <button class="btn btn-sm btn-primary" onclick="App.openViewModal('${app.id}')">Prep Notes</button>
+            </div>
           </div>
         </div>
       `;
@@ -271,36 +262,6 @@ const Dashboard = {
           <div class="action-footer">
             <span class="action-date-tag" style="color: #9333ea">⏳ Deadline: Today</span>
             <button class="btn btn-sm btn-secondary" onclick="App.openViewModal('${app.id}')">Details</button>
-          </div>
-        </div>
-      `;
-    });
-
-    // Render Deadlines Soon
-    deadlinesSoon.forEach(({ app, diffDays }) => {
-      let badgeClass = 'badge-medium';
-      let tagText = `Deadline in ${diffDays} days`;
-      if (diffDays === 0) {
-        badgeClass = 'badge-high';
-        tagText = 'Deadline TODAY!';
-      } else if (diffDays <= 3) {
-        badgeClass = 'badge-high';
-        tagText = `Deadline in ${diffDays} days ⚠️`;
-      }
-
-      html += `
-        <div class="action-card deadline-soon">
-          <div class="action-header">
-            <span class="action-company">${this.escape(app.company)}</span>
-            <span class="badge ${badgeClass}">${diffDays <= 3 ? 'URGENT DEADLINE' : 'DEADLINE SOON'}</span>
-          </div>
-          <div class="action-title">${this.escape(app.jobTitle)}</div>
-          <div class="action-detail">
-            <strong>Status:</strong> Saved (Not Applied Yet)
-          </div>
-          <div class="action-footer">
-            <span class="action-date-tag" style="color: #dc2626">📅 ${tagText} (${app.deadline})</span>
-            <button class="btn btn-sm btn-primary" onclick="App.openEditModal('${app.id}')">Apply Now</button>
           </div>
         </div>
       `;

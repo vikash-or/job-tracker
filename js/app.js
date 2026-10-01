@@ -121,12 +121,9 @@ const App = {
     document.getElementById('app-workMode').value = 'On-site';
     document.getElementById('app-jobUrl').value = '';
     document.getElementById('app-companyCareerUrl').value = '';
-    document.getElementById('app-dateFound').value = today;
     document.getElementById('app-dateApplied').value = today;
-    document.getElementById('app-deadline').value = '';
     
     document.getElementById('app-status').value = 'Applied';
-    document.getElementById('app-priority').value = 'Medium';
     document.getElementById('app-source').value = 'LinkedIn';
     document.getElementById('app-cvVersion').value = 'General-01';
     document.getElementById('app-coverLetterUsed').value = 'No';
@@ -186,12 +183,9 @@ const App = {
     document.getElementById('app-workMode').value = app.workMode || 'On-site';
     document.getElementById('app-jobUrl').value = app.jobUrl || '';
     document.getElementById('app-companyCareerUrl').value = app.companyCareerUrl || '';
-    document.getElementById('app-dateFound').value = app.dateFound || '';
     document.getElementById('app-dateApplied').value = app.dateApplied || '';
-    document.getElementById('app-deadline').value = app.deadline || '';
 
     document.getElementById('app-status').value = app.status || 'Saved';
-    document.getElementById('app-priority').value = app.priority || 'Medium';
     document.getElementById('app-source').value = app.source || 'LinkedIn';
     document.getElementById('app-cvVersion').value = app.cvVersion || '';
     document.getElementById('app-coverLetterUsed').value = app.coverLetterUsed || 'No';
@@ -252,12 +246,9 @@ const App = {
       workMode: document.getElementById('app-workMode').value,
       jobUrl: document.getElementById('app-jobUrl').value.trim(),
       companyCareerUrl: document.getElementById('app-companyCareerUrl').value.trim(),
-      dateFound: document.getElementById('app-dateFound').value,
       dateApplied: document.getElementById('app-dateApplied').value,
-      deadline: document.getElementById('app-deadline').value,
 
       status: document.getElementById('app-status').value,
-      priority: document.getElementById('app-priority').value,
       source: document.getElementById('app-source').value,
       cvVersion: document.getElementById('app-cvVersion').value.trim(),
       coverLetterUsed: document.getElementById('app-coverLetterUsed').value,
@@ -343,15 +334,12 @@ const App = {
     let html = `
       <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap;">
         ${Applications.getStatusBadge(app.status)}
-        ${Applications.getPriorityBadge(app.priority)}
         <span class="badge badge-saved">📍 ${this.escape(app.location || 'N/A')} (${this.escape(app.workMode)})</span>
         <span class="badge badge-saved">📄 CV: ${this.escape(app.cvVersion || 'Default')}</span>
       </div>
 
       <div class="form-grid" style="margin-bottom: 1.5rem;">
-        <div><strong>Date Found:</strong> ${app.dateFound || 'N/A'}</div>
         <div><strong>Date Applied:</strong> ${app.dateApplied || 'N/A'}</div>
-        <div><strong>Deadline:</strong> ${app.deadline || 'None'}</div>
         <div><strong>Salary/CTC:</strong> ${this.escape(app.salary || 'Not specified')}</div>
         <div><strong>Job Source:</strong> ${this.escape(app.source || 'N/A')}</div>
         <div><strong>Cover Letter Used:</strong> ${app.coverLetterUsed || 'No'}</div>
@@ -384,11 +372,26 @@ const App = {
       <!-- Interview Info -->
       ${app.interviewDate ? `
         <div style="background: var(--bg-primary); padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1rem; border: 1px solid var(--border-color);">
-          <h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.4rem;">Interview Details</h4>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+            <h4 style="font-size: 0.95rem; font-weight: 700;">Interview Details</h4>
+            <a href="${this.getInterviewCalendarUrl(app)}" target="_blank" rel="noopener" class="btn btn-sm btn-secondary" style="text-decoration: none;">📅 Add to Google Calendar</a>
+          </div>
           <div><strong>Round:</strong> ${this.escape(app.interviewRound)} on ${app.interviewDate} ${app.interviewTime ? 'at ' + app.interviewTime : ''}</div>
           <div><strong>Interviewer:</strong> ${this.escape(app.interviewer || 'TBD')}</div>
           ${app.questionsAsked ? `<div><strong>Questions Asked:</strong> ${this.escape(app.questionsAsked)}</div>` : ''}
           ${app.prepNotes ? `<div><strong>Prep / Performance:</strong> ${this.escape(app.prepNotes)}</div>` : ''}
+        </div>
+      ` : ''}
+
+      ${app.followUpDate ? `
+        <div style="background: var(--bg-primary); padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1rem; border: 1px solid var(--border-color);">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <h4 style="font-size: 0.95rem; font-weight: 700;">Follow-up Date</h4>
+              <div style="font-size: 0.85rem;">📅 <strong>Date:</strong> ${app.followUpDate} (${this.escape(app.nextAction || 'Outreach')})</div>
+            </div>
+            <a href="${this.getFollowupCalendarUrl(app)}" target="_blank" rel="noopener" class="btn btn-sm btn-secondary" style="text-decoration: none;">📅 Add to Google Calendar</a>
+          </div>
         </div>
       ` : ''}
 
@@ -518,6 +521,39 @@ const App = {
 
     const countEl = document.getElementById('settings-stored-apps-count');
     if (countEl) countEl.textContent = `${appCount} applications, ${contactCount} contacts stored`;
+
+    const urlInput = document.getElementById('settings-sheets-url');
+    if (urlInput) urlInput.value = Storage.getGoogleSheetsUrl();
+  },
+
+  saveGoogleSheetsUrl() {
+    const urlInput = document.getElementById('settings-sheets-url');
+    if (urlInput) {
+      const url = urlInput.value.trim();
+      Storage.setGoogleSheetsUrl(url);
+      this.showToast(url ? 'Google Sheets Web App URL saved!' : 'Google Sheets URL cleared.');
+    }
+  },
+
+  syncAllToGoogleSheets() {
+    const url = Storage.getGoogleSheetsUrl();
+    if (!url) {
+      alert('Please save your Google Sheets Web App URL first!');
+      return;
+    }
+    Storage.syncAllToGoogleSheets()
+      .then(res => {
+        if (res.success) {
+          this.showToast('All applications synced to Google Sheets!');
+        } else {
+          alert('Sync Warning: ' + (res.reason || res.error || 'Failed to sync'));
+        }
+      });
+  },
+
+  openSheetsGuideModal() {
+    const modal = document.getElementById('sheets-guide-modal');
+    if (modal) modal.classList.add('active');
   },
 
   handleImportFile(event) {
@@ -535,14 +571,6 @@ const App = {
       }
     };
     reader.readAsText(file);
-  },
-
-  loadDemoData() {
-    if (confirm('Load demo data? This will replace current stored items with sample application records.')) {
-      Storage.loadDemoData();
-      this.showToast('Demo data loaded successfully!');
-      this.navigateTo('dashboard');
-    }
   },
 
   confirmClearAll() {
@@ -575,6 +603,53 @@ const App = {
       toast.style.transition = 'all 0.3s ease';
       setTimeout(() => container.removeChild(toast), 300);
     }, 3000);
+  },
+
+  /**
+   * Calendar Sync URL Helpers (Google Calendar)
+   */
+  createGoogleCalendarUrl({ title, details, location, startDate, startTime }) {
+    if (!startDate) return '#';
+    const dateClean = startDate.replace(/-/g, '');
+    let datesParam = `${dateClean}/${dateClean}`;
+
+    if (startTime && startTime.includes(':')) {
+      const [h, m] = startTime.split(':').map(Number);
+      const timeStart = `${String(h).padStart(2, '0')}${String(m).padStart(2, '0')}00`;
+      const endH = String((h + 1) % 24).padStart(2, '0');
+      const timeEnd = `${endH}${String(m).padStart(2, '0')}00`;
+      datesParam = `${dateClean}T${timeStart}/${dateClean}T${timeEnd}`;
+    }
+
+    const url = new URL('https://calendar.google.com/calendar/render');
+    url.searchParams.set('action', 'TEMPLATE');
+    url.searchParams.set('text', title);
+    if (details) url.searchParams.set('details', details);
+    if (location) url.searchParams.set('location', location);
+    url.searchParams.set('dates', datesParam);
+
+    return url.toString();
+  },
+
+  getFollowupCalendarUrl(app) {
+    if (!app || !app.followUpDate) return '#';
+    return this.createGoogleCalendarUrl({
+      title: `Follow-up: ${app.company} (${app.jobTitle})`,
+      details: `Next Action: ${app.nextAction || 'Send follow-up outreach'}\nRecruiter Contact: ${app.contactPerson || 'N/A'} (${app.contactEmail || ''})\nJob Tracker Record: ${app.id}`,
+      location: app.location || '',
+      startDate: app.followUpDate
+    });
+  },
+
+  getInterviewCalendarUrl(app) {
+    if (!app || !app.interviewDate) return '#';
+    return this.createGoogleCalendarUrl({
+      title: `Interview (${app.interviewRound || 'Round'}): ${app.company} - ${app.jobTitle}`,
+      details: `Interviewer: ${app.interviewer || 'TBD'}\nPrep Notes: ${app.prepNotes || 'Review job description & coding topics'}\nJob Tracker Record: ${app.id}`,
+      location: app.location || app.workMode || '',
+      startDate: app.interviewDate,
+      startTime: app.interviewTime
+    });
   },
 
   escape(str) {

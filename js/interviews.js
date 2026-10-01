@@ -116,6 +116,7 @@ const Interviews = {
 
         <div class="action-footer" style="margin-top: 0.75rem; gap: 0.5rem; flex-wrap: wrap;">
           <button class="btn btn-sm btn-primary" onclick="Interviews.openRecordModal('${app.id}')">✏️ Log Performance Notes</button>
+          <a href="${App.getInterviewCalendarUrl(app)}" target="_blank" rel="noopener" class="btn btn-sm btn-secondary" style="text-decoration: none;">📅 Sync Calendar</a>
           <button class="btn btn-sm btn-secondary" onclick="App.openViewModal('${app.id}')">Full App</button>
         </div>
       </div>

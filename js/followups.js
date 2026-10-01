@@ -113,6 +113,7 @@ const Followups = {
           <div class="action-footer" style="margin-top: 0.75rem; gap: 0.5rem; flex-wrap: wrap;">
             <button class="btn btn-sm btn-primary" onclick="Followups.markCompleted('${app.id}')">✓ Mark Done</button>
             <button class="btn btn-sm btn-secondary" onclick="Followups.reschedule('${app.id}')">📅 Reschedule</button>
+            <a href="${App.getFollowupCalendarUrl(app)}" target="_blank" rel="noopener" class="btn btn-sm btn-secondary" style="text-decoration: none;">📅 Sync Calendar</a>
             <button class="btn btn-sm btn-secondary" onclick="App.openViewModal('${app.id}')">Open App</button>
           </div>
         </div>

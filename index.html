@@ -58,9 +58,7 @@
         </a>
       </nav>
 
-      <div class="sidebar-footer">
-        <button class="btn btn-secondary btn-sm" style="width: 100%;" onclick="App.loadDemoData()">⚡ Load Demo Data</button>
-      </div>
+
     </aside>
 
     <!-- Main Wrapper -->
@@ -173,12 +171,7 @@
                 <option value="Hybrid">Hybrid</option>
                 <option value="Remote">Remote</option>
               </select>
-              <select id="filter-priority" class="form-select">
-                <option value="">All Priorities</option>
-                <option value="High">High Priority</option>
-                <option value="Medium">Medium Priority</option>
-                <option value="Low">Low Priority</option>
-              </select>
+
               <select id="filter-source" class="form-select">
                 <option value="">All Sources</option>
                 <option value="LinkedIn">LinkedIn</option>
@@ -274,12 +267,22 @@
               <button class="btn btn-secondary" onclick="document.getElementById('import-json-file').click()">📤 Import JSON Backup File</button>
             </div>
 
+            <div class="chart-card" style="grid-column: 1 / -1;">
+              <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem;">📊 Google Sheets Cloud Sync (Auto-Backup)</h3>
+              <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">Automatically save and update your job application entries in your private Google Sheet.</p>
+              <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; margin-bottom: 0.75rem;">
+                <input type="url" id="settings-sheets-url" class="form-input" placeholder="Paste your Google Web App URL (https://script.google.com/.../exec)" style="flex: 1; min-width: 300px;">
+                <button class="btn btn-primary" onclick="App.saveGoogleSheetsUrl()">Save URL</button>
+                <button class="btn btn-secondary" onclick="App.syncAllToGoogleSheets()">Sync All Apps Now</button>
+                <button class="btn btn-secondary" onclick="App.openSheetsGuideModal()">📖 Setup Guide & Code</button>
+              </div>
+            </div>
+
             <div class="chart-card">
-              <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem;">Data Storage & Demo Data</h3>
+              <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem;">Data Storage & Maintenance</h3>
               <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;" id="settings-stored-apps-count">0 stored applications</p>
               <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem;">Application version: 1.0.0 (Personal Edition - GitHub Pages compatible)</p>
               <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
-                <button class="btn btn-secondary" onclick="App.loadDemoData()">⚡ Load Demo Data</button>
                 <button class="btn btn-danger" onclick="App.confirmClearAll()">⚠️ Clear All Data</button>
               </div>
             </div>
@@ -354,15 +357,7 @@
               <input type="url" id="app-companyCareerUrl" class="form-input" placeholder="https://careers.company.com">
             </div>
 
-            <div class="form-group">
-              <label class="form-label">Date Found</label>
-              <input type="date" id="app-dateFound" class="form-input">
-            </div>
 
-            <div class="form-group">
-              <label class="form-label">Application Deadline</label>
-              <input type="date" id="app-deadline" class="form-input">
-            </div>
 
             <!-- Application Details & Status -->
             <div class="form-section-title">2. Application Information</div>
@@ -383,14 +378,7 @@
               </select>
             </div>
 
-            <div class="form-group">
-              <label class="form-label">Priority</label>
-              <select id="app-priority" class="form-select">
-                <option value="High">High</option>
-                <option value="Medium">Medium</option>
-                <option value="Low">Low</option>
-              </select>
-            </div>
+
 
             <div class="form-group">
               <label class="form-label">Date Applied</label>
@@ -734,6 +722,97 @@
       <div class="modal-footer">
         <button class="btn btn-secondary" onclick="App.closeModal('contact-form-modal')">Cancel</button>
         <button class="btn btn-primary" onclick="Contacts.saveModal()">Save Contact</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: GOOGLE SHEETS SETUP GUIDE -->
+  <div class="modal-backdrop" id="sheets-guide-modal">
+    <div class="modal" style="max-width: 700px;">
+      <div class="modal-header">
+        <h3 class="modal-title">📊 Google Sheets Sync Setup Guide</h3>
+        <button class="modal-close" onclick="App.closeModal('sheets-guide-modal')">✕</button>
+      </div>
+      <div class="modal-body" style="font-size: 0.875rem; line-height: 1.6;">
+        <p style="margin-bottom: 1rem; color: var(--text-secondary);">Follow these 3 simple steps to automatically sync your job applications to a free private Google Sheet:</p>
+        
+        <h4 style="font-weight: 700; color: var(--text-primary); margin-bottom: 0.3rem;">Step 1: Create a Google Sheet</h4>
+        <p style="margin-bottom: 1rem;">Go to <a href="https://sheets.new" target="_blank" rel="noopener" style="color: var(--primary);">sheets.new</a> to create a new blank spreadsheet. Name it <strong>"My Job Applications Tracker"</strong>.</p>
+
+        <h4 style="font-weight: 700; color: var(--text-primary); margin-bottom: 0.3rem;">Step 2: Paste the Google Apps Script</h4>
+        <p style="margin-bottom: 0.5rem;">In your Google Sheet, click <strong>Extensions ➔ Apps Script</strong>. Delete any code there and paste this exact script:</p>
+
+        <pre style="background: var(--bg-primary); padding: 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color); overflow-x: auto; font-family: monospace; font-size: 0.775rem; color: var(--text-primary); margin-bottom: 1rem;">
+function doPost(e) {
+  try {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    var data = JSON.parse(e.postData.contents);
+    
+    if (sheet.getLastRow() === 0) {
+      sheet.appendRow([
+        "ID", "Company", "Job Title", "Job Type", "Location", "Work Mode",
+        "Status", "Date Applied", "Source", "CV Version", "Cover Letter",
+        "Referral", "Referral Person", "Follow-up Date", "Next Action",
+        "Recruiter Name", "Recruiter Email", "Recruiter LinkedIn",
+        "Assessment Status", "Assessment Notes",
+        "Interview Date", "Interview Time", "Interview Round", "Interviewer",
+        "Interview Questions", "Prep Notes", "Fit Level", "Why Applied",
+        "Requirements Met", "Salary", "Notes", "Job Description", "Last Updated"
+      ]);
+    }
+    
+    var apps = Array.isArray(data) ? data : [data];
+    apps.forEach(function(app) {
+      var rows = sheet.getDataRange().getValues();
+      var rowIndex = -1;
+      for (var i = 1; i < rows.length; i++) {
+        if (rows[i][0] === app.id) {
+          rowIndex = i + 1;
+          break;
+        }
+      }
+      
+      var rowData = [
+        app.id || '', app.company || '', app.jobTitle || '', app.jobType || '',
+        app.location || '', app.workMode || '', app.status || '', app.dateApplied || '',
+        app.source || '', app.cvVersion || '', app.coverLetterUsed || '', app.referral || '',
+        app.referralPerson || '', app.followUpDate || '', app.nextAction || '',
+        app.contactPerson || '', app.contactEmail || '', app.contactLinkedIn || '',
+        app.assessmentStatus || '', app.assessmentNotes || '', app.interviewDate || '',
+        app.interviewTime || '', app.interviewRound || '', app.interviewer || '',
+        app.questionsAsked || '', app.prepNotes || '', app.fit || '', app.whyApplied || '',
+        app.metRequirements || '', app.salary || '', app.notes || '', app.jobDescription || '',
+        new Date().toISOString()
+      ];
+      
+      if (rowIndex > 0) {
+        sheet.getRange(rowIndex, 1, 1, rowData.length).setValues([rowData]);
+      } else {
+        sheet.appendRow(rowData);
+      }
+    });
+    
+    return ContentService.createTextOutput(JSON.stringify({ result: "success" }))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({ result: "error", message: err.toString() }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+        </pre>
+
+        <h4 style="font-weight: 700; color: var(--text-primary); margin-bottom: 0.3rem;">Step 3: Deploy as Web App</h4>
+        <ol style="padding-left: 1.25rem; margin-bottom: 1rem;">
+          <li>Click <strong>Deploy ➔ New deployment</strong>.</li>
+          <li>Click gear icon ⚙️ ➔ Select <strong>Web app</strong>.</li>
+          <li>Set <strong>Execute as</strong>: <code>Me</code>.</li>
+          <li>Set <strong>Who has access</strong>: <code>Anyone</code>.</li>
+          <li>Click <strong>Deploy</strong>, authorize permissions, and copy the <strong>Web App URL</strong>.</li>
+          <li>Paste the URL into the Settings page and click <strong>Save URL</strong>!</li>
+        </ol>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="App.closeModal('sheets-guide-modal')">Close Guide</button>
       </div>
     </div>
   </div>
